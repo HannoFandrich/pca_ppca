@@ -116,4 +116,4 @@ print(reconstructed_data_ppca[0])
 print(np.asarray(data)[0])'''
 
 i=1
-print(type(i) ==int)
+print(np.arange(2,254,20))

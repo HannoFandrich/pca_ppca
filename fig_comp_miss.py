@@ -89,7 +89,7 @@ def test_for_mising_data_vary_comp(data,ax,anno=False,load=False):
             yy2.append(y2)
         joblib.dump(yy2,'yy2_vary_miss.joblib')
     for i,y in enumerate(yy2):
-        ax.plot(fraction, y,label='PPCA n.c.:'+str(num_comp[i]))
+        ax.plot(fraction, y,label='n.c.:'+str(num_comp[i]))
 
     ax.set_xlabel('fraction of observables missing per row')
     ax.set_ylabel('Rooted mean squared error')

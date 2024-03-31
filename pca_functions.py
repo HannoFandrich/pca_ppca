@@ -47,36 +47,31 @@ def ppca(t, num_comp,W_init,sigma_init, max_iter=1000, tol=0.0001): # dataset, n
     t_norm = np.asarray(t - np.nanmean(np.asarray(t), axis=0)) #normalize the data
     if len(miss_ids)>0:
         for m in miss_ids:
-            t_norm[m[0],m[1]] = 0
+            t_norm[m[0],m[1]] = 0 # replace missing entries with 0 in normalised dataset
 
     W = W_init     # initialise the W-matrix and sigma^2
     s_squared = sigma_init
-    recon_data_ppca=t_norm
 
+    recon_data_ppca=t_norm
 
     for i in range(max_iter):  # iterate the E and M steps until convergence or max_iter is reached or 
         S=np.cov(t_norm.T) # calculate the covariance matrix of the dataset
 
-        M = (W.T @ W) + s_squared * np.eye(num_comp)  
+        M = (W.T @ W) + s_squared * np.eye(num_comp) # calculate M
         
-        #E_xt = np.linalg.inv(M) @ W.T @ t_norm.T 
-        
-        #recon_data_ppca = (W @ np.linalg.inv(W.T @ W) @ M @ E_xt).T
         if len(miss_ids)>0:
             for m in miss_ids:
-                t_norm[m[0],m[1]] = recon_data_ppca[m[0],m[1]]
-        E_xt =  t_norm @ W @ np.linalg.inv(M)
-        recon_data_ppca = E_xt @ W.T
+                t_norm[m[0],m[1]] = recon_data_ppca[m[0],m[1]] #replace missing data with inferred data from reconstructed dataset
+
+        E_xt =  t_norm @ W @ np.linalg.inv(M) # calculate expected value of latent variables
+        recon_data_ppca = E_xt @ W.T # reconstruct the dataset
 
         MWSW = np.linalg.inv(M) @ W.T @ S @ W 
-        W_new = S @ W @ np.linalg.inv(s_squared * np.eye(num_comp)+MWSW)
+        W_new = S @ W @ np.linalg.inv(s_squared * np.eye(num_comp)+MWSW) # new W (29) from Tipping and Bishop
         
         SWMW = S @ W @ np.linalg.inv(M) @ W_new.T
-        #print(s_squared * len(miss_ids)/n_features)
 
-        #s_squared_new = 1 / (n_samples * n_features) * (n_samples * s_squared * np.trace(W @ np.linalg.inv(M) @ W.T) + np.sum((E_xt @ W.T - t_norm)**2) + len(miss_ids) * s_squared)
-
-        if len(miss_ids)>0:
+        if len(miss_ids)>0:  # new sigma (30) from Tipping and Bishop
             s_squared_new = np.trace(S - SWMW)/n_features + s_squared * len(miss_ids)/(n_features * n_samples)
         else:
             s_squared_new = np.trace(S - SWMW)/n_features
@@ -92,21 +87,16 @@ def ppca(t, num_comp,W_init,sigma_init, max_iter=1000, tol=0.0001): # dataset, n
         W=W_new
         s_squared=s_squared_new
 
-    #E_xt = np.linalg.inv(M) @ W.T @ t_norm.T
-    #print(t_norm[0:5,0:5])
-    #print(recon_data_ppca[0:5,0:5])
-    #recon_data_ppca = (W @ np.linalg.inv(W.T @ W) @ M @ E_xt)
     recon_data_ppca = [recon_data_ppca[n]+np.nanmean(np.asarray(t), axis=0) for n in range(len(recon_data_ppca))]
     E_xt=E_xt.T
 
-    ppca_data = np.dot(t_norm, W) # Project the data onto the new subspace defined by the eigenvectors
+    ppca_data = np.dot(t_norm, W) # Project the data onto the new subspace 
     return ppca_data, W, s_squared, E_xt, recon_data_ppca, iter
 
 def RMSE(original_data,recon_data):
-    # Calculate the squared differences between corresponding data points
-    squared_diff = [(np.array(og) - np.array(rec)) ** 2 
-                    for og, rec in zip(original_data, recon_data)]
-    # Calculate the mean of the squared differences
+    # calculate the squared differences between corresponding data points
+    squared_diff = [(np.array(og) - np.array(rec)) ** 2 for og, rec in zip(original_data, recon_data)]
+    # calculate the mean of the squared differences and get the root
     mse = (np.mean(squared_diff))**(1/2)
 
     return mse

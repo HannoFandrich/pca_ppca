@@ -13,7 +13,7 @@ from sklearn.cluster import KMeans
 import math
 import joblib
 
-data = pd.read_csv('highly_variable_genes.csv')
+data = pd.read_csv('data/highly_variable_genes.csv')
 n_samples,n_features=data.shape
 #data=data.T
 
@@ -32,8 +32,8 @@ def test_for_mising_data(data,n_comp,ax,anno=False,load=False):
     fraction=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
     
     if load:
-        y1=joblib.load('y1_vary_miss.joblib')
-        y2=joblib.load('y2_vary_miss.joblib')
+        y1=joblib.load('data/tmp/y1_vary_miss.joblib')
+        y2=joblib.load('data/tmp/y2_vary_miss.joblib')
     else:
         y1=[]
         y2=[]
@@ -45,8 +45,8 @@ def test_for_mising_data(data,n_comp,ax,anno=False,load=False):
             ppca_data, W, s_squared, E_xt, recon_data_ppca, iter = ppca(compromised_data, n_comp,W_init,s_init)
             y1.append(RMSE(np.asarray(data),recon_data_pca))
             y2.append(RMSE(np.asarray(data),recon_data_ppca))
-        joblib.dump(y1,'y1_vary_miss.joblib')
-        joblib.dump(y2,'y2_vary_miss.joblib')
+        joblib.dump(y1,'data/tmp/y1_vary_miss.joblib')
+        joblib.dump(y2,'data/tmp/y2_vary_miss.joblib')
     ax.plot(fraction, y1,label='PCA')
     ax.plot(fraction, y2,label='PPCA')
     ax.set_xlabel('fraction of observables missing per row')
@@ -72,7 +72,7 @@ def test_for_mising_data_vary_comp(data,ax,anno=False,load=False):
     #ax.plot(fraction, y1,label='pca n.c.:254')
     '''
     if load:
-        yy2=joblib.load('yy2_vary_miss.joblib')
+        yy2=joblib.load('data/tmp/yy2_vary_miss.joblib')
     else:
         yy2=[]
         for n in num_comp:
@@ -87,7 +87,7 @@ def test_for_mising_data_vary_comp(data,ax,anno=False,load=False):
                 RMSE_ppca=RMSE(np.asarray(data),recon_data_ppca)
                 y2.append(RMSE_pca-RMSE_ppca)
             yy2.append(y2)
-        joblib.dump(yy2,'yy2_vary_miss.joblib')
+        joblib.dump(yy2,'data/tmp/yy2_vary_miss.joblib')
     for i,y in enumerate(yy2):
         ax.plot(fraction, y,label='n.c.:'+str(num_comp[i]))
 

@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from sklearn.cluster import KMeans
 
-data = pd.read_csv('highly_variable_genes.csv')
+data = pd.read_csv('data/highly_variable_genes.csv')
 #data=data.T
 
 
@@ -92,7 +92,7 @@ scoreplot(pca_data,ax2, axis_lables=True,anno='B')
 scoreplot(ppca_data,ax3,anno='C')
 
 fig.tight_layout()
-fig.savefig('fig1.png')
+fig.savefig('figures/fig1.png')
 
 
 fig = plt.figure(figsize=(8, 6))
@@ -111,6 +111,6 @@ for i,a in enumerate([ax1,ax2,ax3,ax4]):
     scoreplot(ppca_data,a, axis_lables=False,anno=letters[i])
 
 fig.tight_layout()
-fig.savefig('fig_a1.png')
+fig.savefig('figures/fig_a1.png')
 
 

@@ -11,10 +11,10 @@ import joblib
 
 def vary_num_comp(data,start_comp,end_comp,ax,anno=False,load=False):
     if load:
-        x=joblib.load('x_vary_num_comp.joblib')
-        y1=joblib.load('y1_vary_num_comp.joblib')
-        y2=joblib.load('y2_vary_num_comp.joblib')
-        y3=joblib.load('y3_vary_num_comp.joblib')
+        x=joblib.load('data/tmp/x_vary_num_comp.joblib')
+        y1=joblib.load('data/tmp/y1_vary_num_comp.joblib')
+        y2=joblib.load('data/tmp/y2_vary_num_comp.joblib')
+        y3=joblib.load('data/tmp/y3_vary_num_comp.joblib')
     else:
         x=[]
         y1=[]
@@ -31,10 +31,10 @@ def vary_num_comp(data,start_comp,end_comp,ax,anno=False,load=False):
             ppca_data, W, s_squared, E_xt, recon_data_ppca, iter = ppca(data, i,W_init,s_init)
             y2.append(RMSE(np.asarray(data),recon_data_ppca))
             y3.append(RMSE(recon_data_pca,recon_data_ppca))
-        joblib.dump(x,'x_vary_num_comp.joblib')
-        joblib.dump(y1,'y1_vary_num_comp.joblib')
-        joblib.dump(y2,'y2_vary_num_comp.joblib')
-        joblib.dump(y3,'y3_vary_num_comp.joblib')
+        joblib.dump(x,'data/tmp/x_vary_num_comp.joblib')
+        joblib.dump(y1,'data/tmp/y1_vary_num_comp.joblib')
+        joblib.dump(y2,'data/tmp/y2_vary_num_comp.joblib')
+        joblib.dump(y3,'data/tmp/y3_vary_num_comp.joblib')
     ax.plot(x, y1, label="pca")
     ax.plot(x, y2, label="ppca")
     #ax.legend(loc='upper center')
@@ -53,9 +53,9 @@ def vary_num_comp(data,start_comp,end_comp,ax,anno=False,load=False):
 def vary_ppca(data, num_comp, W_init, s_init,max_iter,tol,ax,load=False,anno=False):
     if len(np.asarray(W_init).shape)>2:
         if load:
-            x=joblib.load('x_ppca_w.joblib')
-            y=joblib.load('y_ppca_w.joblib')
-            it=joblib.load('it_ppca_w.joblib')
+            x=joblib.load('data/tmp/x_ppca_w.joblib')
+            y=joblib.load('data/tmp/y_ppca_w.joblib')
+            it=joblib.load('data/tmp/it_ppca_w.joblib')
         else:
             x=[]
             y=[]
@@ -65,9 +65,9 @@ def vary_ppca(data, num_comp, W_init, s_init,max_iter,tol,ax,load=False,anno=Fal
                 ppca_data, W, s_squared, E_xt, recon_data_ppca, iter = ppca(data, num_comp,w,s_init)
                 y.append(RMSE(np.asarray(data),recon_data_ppca))
                 it.append(iter)
-            joblib.dump(x,'x_ppca_w.joblib')
-            joblib.dump(y,'y_ppca_w.joblib')
-            joblib.dump(it,'it_ppca_w.joblib')
+            joblib.dump(x,'data/tmp/x_ppca_w.joblib')
+            joblib.dump(y,'data/tmp/y_ppca_w.joblib')
+            joblib.dump(it,'data/tmp/it_ppca_w.joblib')
         ax.plot(x, y,label='RMSE',color='blue')
         ax.set_xlabel('initial W multiplication factor')
         ax.set_ylabel('Rooted mean squared error')
@@ -79,9 +79,9 @@ def vary_ppca(data, num_comp, W_init, s_init,max_iter,tol,ax,load=False,anno=Fal
 
     elif type(s_init) != int:
         if load:
-            x=joblib.load('x_ppca_s.joblib')
-            y=joblib.load('y_ppca_s.joblib')
-            it=joblib.load('it_ppca_s.joblib')
+            x=joblib.load('data/tmp/x_ppca_s.joblib')
+            y=joblib.load('data/tmp/y_ppca_s.joblib')
+            it=joblib.load('data/tmp/it_ppca_s.joblib')
         else:
             x=[]
             y=[]
@@ -91,9 +91,9 @@ def vary_ppca(data, num_comp, W_init, s_init,max_iter,tol,ax,load=False,anno=Fal
                 ppca_data, W, s_squared, E_xt, recon_data_ppca, iter = ppca(data, num_comp,W_init,s)
                 y.append(RMSE(np.asarray(data),recon_data_ppca))
                 it.append(iter)
-            joblib.dump(x,'x_ppca_s.joblib')
-            joblib.dump(y,'y_ppca_s.joblib')
-            joblib.dump(it,'it_ppca_s.joblib')
+            joblib.dump(x,'data/tmp/x_ppca_s.joblib')
+            joblib.dump(y,'data/tmp/y_ppca_s.joblib')
+            joblib.dump(it,'data/tmp/it_ppca_s.joblib')
         ax.plot(x, y,label='RMSE',color='blue')
         ax.set_xlabel('initial sigma squared')
         ax.set_ylabel('Rooted mean squared error')
@@ -106,7 +106,7 @@ def vary_ppca(data, num_comp, W_init, s_init,max_iter,tol,ax,load=False,anno=Fal
     if anno!= False:
         ax.annotate(anno, xy=(0.02, 1.05), xycoords='axes fraction', fontsize=16, fontweight='bold')
 
-data = pd.read_csv('highly_variable_genes.csv')
+data = pd.read_csv('data/highly_variable_genes.csv')
 n_samples,n_features=data.shape
 
 num_components = 254
@@ -136,4 +136,4 @@ vary_ppca(data, num_components, W_init_arr, s_init,max_iter=100,tol=0.0001,ax=ax
 vary_ppca(data, num_components, W_init, s_init_arr,max_iter=100,tol=0.0001,ax=ax2,load=True,anno='C')
 
 fig.tight_layout()
-fig.savefig('fig3.png')
+fig.savefig('figures/fig3.png')
